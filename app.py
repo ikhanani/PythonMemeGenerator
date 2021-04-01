@@ -19,7 +19,7 @@ def setup():
                    './_data/DogQuotes/DogQuotesPDF.pdf',
                    './_data/DogQuotes/DogQuotesCSV.csv']
 
-    quotes = [] 
+    quotes = []
     for file in quote_files:
         quotes.extend(Ingestor.parse(file))
 
@@ -56,11 +56,15 @@ def meme_form():
 def meme_post():
     """ Create a user defined meme """
 
-    url = request.form['image_url']
-    pic = requests.get(url)
+    try:
+        url = request.form['image_url']
+        pic = requests.get(url)
+    except Exception as e:
+        raise Exception("Error loading image", e)
     with open("./tmp.jpg", "wb") as f:
         f.write(pic.content)
-    path = meme.make_meme("./tmp.jpg", request.form['body'], request.form['author'])
+    path = meme.make_meme("./tmp.jpg",
+                          request.form['body'], request.form['author'])
     os.remove("./tmp.jpg")
 
     return render_template('meme.html', path=path)
