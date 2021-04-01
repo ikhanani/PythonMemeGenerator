@@ -21,7 +21,7 @@ class MemeEngine:
             height = width * img.height / img.width
             img = img.resize((int(width), int(height)))
             result = ImageDraw.Draw(img)
-            result.text((random.randint(0, width-100), random.randint(0, height-100)), text + " - " + author)
+            result.text((random.randint(50, int(width)-100), random.randint(50, int(height)-100)), text.replace('’', '\'') + " - " + author)
             img.save(out, "JPEG")
             return(out)
         except Exception as e:
