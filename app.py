@@ -5,6 +5,7 @@ from flask import Flask, render_template, abort, request
 from QuoteEngine.Ingestor import Ingestor
 from QuoteEngine.QuoteModel import QuoteModel
 from MemeEngine.MemeEngine import MemeEngine
+from PIL import Image, ImageDraw, ImageFont
 
 app = Flask(__name__)
 
@@ -56,13 +57,14 @@ def meme_form():
 def meme_post():
     """ Create a user defined meme """
 
-    try:
-        url = request.form['image_url']
-        pic = requests.get(url)
-    except Exception as e:
-        raise Exception("Error loading image", e)
+    url = request.form['image_url']
+    pic = requests.get(url)
     with open("./tmp.jpg", "wb") as f:
         f.write(pic.content)
+    try:
+        img = Image.open("./tmp.jpg")
+    except Exception:
+        return render_template('invalid_image.html')
     path = meme.make_meme("./tmp.jpg",
                           request.form['body'], request.form['author'])
     os.remove("./tmp.jpg")

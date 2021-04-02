@@ -21,10 +21,29 @@ class MemeEngine:
                 width = 500
             height = width * img.height / img.width
             img = img.resize((int(width), int(height)))
+            font = ImageFont.truetype('Arial.ttf', 20)
             result = ImageDraw.Draw(img)
-            result.text((random.randint(50, int(width)-200), random.randint(50, int(height)-200)),
-                        text.replace('’', '\'') + "\n - " + author)
+            textx = random.randint(50, int(width)-200)
+            text = text.replace('’', '\'')
+            result.text((textx, random.randint(50, int(height)-200)),
+                        self.wrap_text(text, font, textx, width) + "\n - " + author, font=font)
             img.save(out, "JPEG")
             return(out)
         except Exception as e:
             raise Exception("Error generating meme:", e)
+
+    def wrap_text(self, text, font, textx, width):
+        if(font.getsize(text)[0] <= width - textx - 10):
+            return text
+        result = ''
+        words = text.split(' ')
+        count = 0
+        while count < len(words):
+            tmp = ''
+            while(count < len(words) and font.getsize(tmp + words[count])[0] <= width - textx - 10):
+                tmp = tmp + ' ' + words[count]
+                count += 1
+            result = result + tmp + '\n'
+        return result
+
+
